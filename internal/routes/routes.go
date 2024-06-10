@@ -7,8 +7,12 @@ type Routes struct {
 }
 
 func New() *Routes {
-	mux := http.NewServeMux()
-	return &Routes{mux}
+	routes := Routes{
+		mux: http.NewServeMux(),
+	}
+
+	routes.mux.HandleFunc("GET /api/v1/toggles", routes.getToggles)
+	return &routes
 }
 
 func (routes *Routes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
