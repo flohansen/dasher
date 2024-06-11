@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/flohansen/dasher-server/internal/mocks"
 	"github.com/flohansen/dasher-server/internal/model"
+	"github.com/flohansen/dasher-server/internal/routes/mocks"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
