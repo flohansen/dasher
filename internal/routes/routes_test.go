@@ -2,6 +2,7 @@ package routes
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -45,7 +46,11 @@ func TestRoutes(t *testing.T) {
 			routes.ServeHTTP(w, r)
 
 			// then
-			assert.Equal(t, http.StatusOK, w.Result().StatusCode)
+			res := w.Result()
+			b, _ := io.ReadAll(res.Body)
+			assert.Equal(t, http.StatusOK, res.StatusCode)
+			assert.Equal(t, "application/json", res.Header.Get("Content-Type"))
+			assert.JSONEq(t, `[]`, string(b))
 		})
 	})
 }
