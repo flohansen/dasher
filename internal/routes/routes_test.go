@@ -9,14 +9,14 @@ import (
 )
 
 func TestRoutes(t *testing.T) {
-	t.Run("GET /api/v1/toggles", func(t *testing.T) {
+	t.Run("GET /api/v1/features", func(t *testing.T) {
 		t.Run("should return 200 OK", func(t *testing.T) {
 			// given
 			routes := New()
 
 			// when
 			w := httptest.NewRecorder()
-			r := httptest.NewRequest(http.MethodGet, "/api/v1/toggles", nil)
+			r := httptest.NewRequest(http.MethodGet, "/api/v1/features", nil)
 			routes.ServeHTTP(w, r)
 
 			// then

@@ -11,7 +11,7 @@ func New() *Routes {
 		mux: http.NewServeMux(),
 	}
 
-	routes.mux.HandleFunc("GET /api/v1/toggles", routes.getToggles)
+	routes.mux.HandleFunc("GET /api/v1/features", routes.getFeatures)
 	return &routes
 }
 
