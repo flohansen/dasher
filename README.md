@@ -4,6 +4,10 @@
 
 ## How to
 
+### Setup
+```
+make setup
+```
 ### Run tests
 ```
 make test

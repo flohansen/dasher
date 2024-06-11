@@ -1,14 +1,24 @@
 package routes
 
-import "net/http"
+import (
+	"net/http"
 
-type Routes struct {
-	mux *http.ServeMux
+	"github.com/flohansen/dasher-server/internal/model"
+)
+
+type FeatureStore interface {
+	GetAll() ([]model.FeatureData, error)
 }
 
-func New() *Routes {
+type Routes struct {
+	mux          *http.ServeMux
+	featureStore FeatureStore
+}
+
+func New(featureStore FeatureStore) *Routes {
 	routes := Routes{
-		mux: http.NewServeMux(),
+		mux:          http.NewServeMux(),
+		featureStore: featureStore,
 	}
 
 	routes.mux.HandleFunc("GET /api/v1/features", routes.getFeatures)
