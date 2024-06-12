@@ -22,9 +22,6 @@ jobs:
       uses: actions/setup-go@v4
       with:
         go-version: '1.22'
-      
-    - name: Install dependencies
-      run: go get .
 
     - name: Go test
       run: go test ./... -race
