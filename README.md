@@ -22,5 +22,5 @@ go run cmd/main.go
 ```
 
 ## API Paths
-`GET` `/api/v1/features`: Get all features stored by the server
+`GET` `/api/v1/features`: Get all features stored by the server \
 `POST` `/api/v1/features`: Create or update feature
