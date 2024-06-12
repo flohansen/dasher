@@ -11,5 +11,5 @@ import (
 type Feature struct {
 	FeatureID   string
 	Description sql.NullString
-	Enabled     sql.NullInt64
+	Enabled     sql.NullBool
 }

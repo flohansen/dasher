@@ -18,3 +18,7 @@ func NewSQLite(db sqlc.DBTX) *SQLiteDatastore {
 func (repo *SQLiteDatastore) GetAll(ctx context.Context) ([]sqlc.Feature, error) {
 	return repo.q.GetAllFeatures(ctx)
 }
+
+func (repo *SQLiteDatastore) Upsert(ctx context.Context, feature sqlc.Feature) error {
+	return repo.q.UpsertFeature(ctx, sqlc.UpsertFeatureParams(feature))
+}

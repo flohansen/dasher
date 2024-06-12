@@ -54,3 +54,17 @@ func (mr *MockFeatureStoreMockRecorder) GetAll(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockFeatureStore)(nil).GetAll), ctx)
 }
+
+// Upsert mocks base method.
+func (m *MockFeatureStore) Upsert(ctx context.Context, feature sqlc.Feature) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Upsert", ctx, feature)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Upsert indicates an expected call of Upsert.
+func (mr *MockFeatureStoreMockRecorder) Upsert(ctx, feature any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Upsert", reflect.TypeOf((*MockFeatureStore)(nil).Upsert), ctx, feature)
+}

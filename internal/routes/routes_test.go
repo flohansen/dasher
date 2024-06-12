@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"bytes"
+	"database/sql"
 	"errors"
 	"io"
 	"net/http"
@@ -51,6 +53,66 @@ func TestRoutes(t *testing.T) {
 			assert.Equal(t, http.StatusOK, res.StatusCode)
 			assert.Equal(t, "application/json", res.Header.Get("Content-Type"))
 			assert.JSONEq(t, `[]`, string(b))
+		})
+	})
+
+	t.Run("POST /api/v1/features", func(t *testing.T) {
+		t.Run("should return 500 INTERNAL SERVER ERROR if decoding request failed", func(t *testing.T) {
+			// given
+			body := bytes.NewReader([]byte(`{"feature`))
+
+			// when
+			w := httptest.NewRecorder()
+			r := httptest.NewRequest(http.MethodPost, "/api/v1/features", body)
+			routes.ServeHTTP(w, r)
+
+			// then
+			res := w.Result()
+			assert.Equal(t, http.StatusBadRequest, res.StatusCode)
+		})
+
+		t.Run("should return 500 INTERNAL SERVER ERROR if upserting feature failed", func(t *testing.T) {
+			// given
+			body := bytes.NewReader([]byte(`{"featureId":"TOGGLE_ID"}`))
+
+			featureStore.EXPECT().
+				Upsert(gomock.Any(), sqlc.Feature{
+					FeatureID:   "TOGGLE_ID",
+					Description: sql.NullString{String: "", Valid: false},
+					Enabled:     sql.NullBool{Bool: false, Valid: false},
+				}).
+				Return(errors.New("some error"))
+
+			// when
+			w := httptest.NewRecorder()
+			r := httptest.NewRequest(http.MethodPost, "/api/v1/features", body)
+			routes.ServeHTTP(w, r)
+
+			// then
+			res := w.Result()
+			assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+		})
+
+		t.Run("should return 200 OK", func(t *testing.T) {
+			// given
+			body := bytes.NewReader([]byte(`{"featureId":"TOGGLE_ID"}`))
+
+			featureStore.EXPECT().
+				Upsert(gomock.Any(), sqlc.Feature{
+					FeatureID:   "TOGGLE_ID",
+					Description: sql.NullString{String: "", Valid: false},
+					Enabled:     sql.NullBool{Bool: false, Valid: false},
+				}).
+				Return(nil)
+
+			// when
+			w := httptest.NewRecorder()
+			r := httptest.NewRequest(http.MethodPost, "/api/v1/features", body)
+			routes.ServeHTTP(w, r)
+
+			// then
+			res := w.Result()
+			assert.Equal(t, http.StatusOK, res.StatusCode)
 		})
 	})
 }
