@@ -10,9 +10,10 @@
 package mocks
 
 import (
+	context "context"
 	reflect "reflect"
 
-	model "github.com/flohansen/dasher-server/internal/model"
+	sqlc "github.com/flohansen/dasher-server/internal/sqlc"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -40,16 +41,16 @@ func (m *MockFeatureStore) EXPECT() *MockFeatureStoreMockRecorder {
 }
 
 // GetAll mocks base method.
-func (m *MockFeatureStore) GetAll() ([]model.FeatureData, error) {
+func (m *MockFeatureStore) GetAll(ctx context.Context) ([]sqlc.Feature, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetAll")
-	ret0, _ := ret[0].([]model.FeatureData)
+	ret := m.ctrl.Call(m, "GetAll", ctx)
+	ret0, _ := ret[0].([]sqlc.Feature)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetAll indicates an expected call of GetAll.
-func (mr *MockFeatureStoreMockRecorder) GetAll() *gomock.Call {
+func (mr *MockFeatureStoreMockRecorder) GetAll(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockFeatureStore)(nil).GetAll))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAll", reflect.TypeOf((*MockFeatureStore)(nil).GetAll), ctx)
 }

@@ -1,13 +1,14 @@
 package routes
 
 import (
+	"context"
 	"net/http"
 
-	"github.com/flohansen/dasher-server/internal/model"
+	"github.com/flohansen/dasher-server/internal/sqlc"
 )
 
 type FeatureStore interface {
-	GetAll() ([]model.FeatureData, error)
+	GetAll(ctx context.Context) ([]sqlc.Feature, error)
 }
 
 type Routes struct {

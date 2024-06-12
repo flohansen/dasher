@@ -1,18 +1,20 @@
 package datastore
 
 import (
-	"errors"
+	"context"
 
-	"github.com/flohansen/dasher-server/internal/model"
+	"github.com/flohansen/dasher-server/internal/sqlc"
 )
 
-type InMemDatastore struct {
+type SQLiteDatastore struct {
+	q *sqlc.Queries
 }
 
-func NewInMem() *InMemDatastore {
-	return &InMemDatastore{}
+func NewSQLite(db sqlc.DBTX) *SQLiteDatastore {
+	q := sqlc.New(db)
+	return &SQLiteDatastore{q}
 }
 
-func (repo *InMemDatastore) GetAll() ([]model.FeatureData, error) {
-	return nil, errors.New("not implemented")
+func (repo *SQLiteDatastore) GetAll(ctx context.Context) ([]sqlc.Feature, error) {
+	return repo.q.GetAllFeatures(ctx)
 }

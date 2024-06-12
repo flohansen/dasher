@@ -7,8 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/flohansen/dasher-server/internal/model"
 	"github.com/flohansen/dasher-server/internal/routes/mocks"
+	"github.com/flohansen/dasher-server/internal/sqlc"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )
@@ -22,7 +22,7 @@ func TestRoutes(t *testing.T) {
 		t.Run("should return 500 INTERNAL SERVER ERROR", func(t *testing.T) {
 			// given
 			featureStore.EXPECT().
-				GetAll().
+				GetAll(gomock.Any()).
 				Return(nil, errors.New("some error"))
 
 			// when
@@ -37,8 +37,8 @@ func TestRoutes(t *testing.T) {
 		t.Run("should return 200 OK", func(t *testing.T) {
 			// given
 			featureStore.EXPECT().
-				GetAll().
-				Return([]model.FeatureData{}, nil)
+				GetAll(gomock.Any()).
+				Return([]sqlc.Feature{}, nil)
 
 			// when
 			w := httptest.NewRecorder()

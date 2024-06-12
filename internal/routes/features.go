@@ -1,13 +1,14 @@
 package routes
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 )
 
 func (routes *Routes) getFeatures(w http.ResponseWriter, r *http.Request) {
-	features, err := routes.featureStore.GetAll()
+	features, err := routes.featureStore.GetAll(context.Background())
 	if err != nil {
 		log.Printf("error while fetching all features: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
