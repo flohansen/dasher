@@ -48,3 +48,12 @@ func (routes *Routes) postFeature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
+
+func (routes *Routes) deleteFeature(w http.ResponseWriter, r *http.Request) {
+	featureID := r.PathValue("featureId")
+	if err := routes.featureStore.Delete(context.Background(), featureID); err != nil {
+		log.Printf("error while deleting feature: %v", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+}

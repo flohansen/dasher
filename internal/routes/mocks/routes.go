@@ -40,6 +40,20 @@ func (m *MockFeatureStore) EXPECT() *MockFeatureStoreMockRecorder {
 	return m.recorder
 }
 
+// Delete mocks base method.
+func (m *MockFeatureStore) Delete(ctx context.Context, featureID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Delete", ctx, featureID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Delete indicates an expected call of Delete.
+func (mr *MockFeatureStoreMockRecorder) Delete(ctx, featureID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockFeatureStore)(nil).Delete), ctx, featureID)
+}
+
 // GetAll mocks base method.
 func (m *MockFeatureStore) GetAll(ctx context.Context) ([]sqlc.Feature, error) {
 	m.ctrl.T.Helper()

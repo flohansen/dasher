@@ -115,4 +115,38 @@ func TestRoutes(t *testing.T) {
 			assert.Equal(t, http.StatusOK, res.StatusCode)
 		})
 	})
+
+	t.Run("DELETE /api/v1/features", func(t *testing.T) {
+		t.Run("should return 500 INTERNAL SERVER ERRROR if delete failed", func(t *testing.T) {
+			// given
+			featureStore.EXPECT().
+				Delete(gomock.Any(), "TOGGLE_ID").
+				Return(errors.New("some error"))
+
+			// when
+			w := httptest.NewRecorder()
+			r := httptest.NewRequest(http.MethodDelete, "/api/v1/features/TOGGLE_ID", nil)
+			routes.ServeHTTP(w, r)
+
+			// then
+			res := w.Result()
+			assert.Equal(t, http.StatusInternalServerError, res.StatusCode)
+		})
+
+		t.Run("should return 200 OK", func(t *testing.T) {
+			// given
+			featureStore.EXPECT().
+				Delete(gomock.Any(), "TOGGLE_ID").
+				Return(nil)
+
+			// when
+			w := httptest.NewRecorder()
+			r := httptest.NewRequest(http.MethodDelete, "/api/v1/features/TOGGLE_ID", nil)
+			routes.ServeHTTP(w, r)
+
+			// then
+			res := w.Result()
+			assert.Equal(t, http.StatusOK, res.StatusCode)
+		})
+	})
 }
