@@ -4,12 +4,8 @@
 
 package sqlc
 
-import (
-	"database/sql"
-)
-
 type Feature struct {
 	FeatureID   string
-	Description sql.NullString
-	Enabled     sql.NullBool
+	Description string
+	Enabled     bool
 }

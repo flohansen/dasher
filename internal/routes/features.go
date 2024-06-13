@@ -2,7 +2,6 @@ package routes
 
 import (
 	"context"
-	"database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
@@ -26,11 +25,7 @@ func (routes *Routes) getFeatures(w http.ResponseWriter, r *http.Request) {
 
 	response := make([]GetFeatureResponse, len(features))
 	for i, feature := range features {
-		response[i] = GetFeatureResponse{
-			FeatureID:   feature.FeatureID,
-			Description: feature.Description.String,
-			Enabled:     feature.Enabled.Bool,
-		}
+		response[i] = GetFeatureResponse(feature)
 	}
 
 	w.Header().Add("Content-Type", "application/json")
@@ -53,11 +48,7 @@ func (routes *Routes) postFeature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := routes.featureStore.Upsert(context.Background(), sqlc.Feature{
-		FeatureID:   req.FeatureID,
-		Description: sql.NullString{String: req.Description, Valid: req.Description != ""},
-		Enabled:     sql.NullBool{Bool: req.Enabled, Valid: req.Enabled},
-	}); err != nil {
+	if err := routes.featureStore.Upsert(context.Background(), sqlc.Feature(req)); err != nil {
 		log.Printf("error while upserting feature: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

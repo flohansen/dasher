@@ -63,7 +63,7 @@ func TestSQLiteDatastore_Integration(t *testing.T) {
 		t.Run("when adding a feature toggle with the same ID", func(t *testing.T) {
 			err := store.Upsert(context.TODO(), sqlc.Feature{
 				FeatureID: "FEATURE_TOGGLE_TEST",
-				Enabled:   sql.NullBool{Bool: true, Valid: true},
+				Enabled:   true,
 			})
 
 			t.Run("there should be no error", func(t *testing.T) {
@@ -74,7 +74,7 @@ func TestSQLiteDatastore_Integration(t *testing.T) {
 				feature := db.getFeature("FEATURE_TOGGLE_TEST")
 				assert.NotNil(t, feature)
 				assert.Equal(t, "FEATURE_TOGGLE_TEST", feature.FeatureID)
-				assert.True(t, feature.Enabled.Bool)
+				assert.True(t, feature.Enabled)
 			})
 		})
 
@@ -114,8 +114,8 @@ func (db *testDb) init() {
 	if _, err := db.db.Exec(`
 		create table if not exists features (
 			feature_id text not null primary key,
-			description text,
-			enabled boolean
+			description text not null,
+			enabled boolean not null
 		)
 	`); err != nil {
 		db.t.Fatal(err)
@@ -124,8 +124,8 @@ func (db *testDb) init() {
 
 func (db *testDb) insertFeature(id string) {
 	if _, err := db.db.Exec(`
-		insert into features (feature_id)
-		values (?)
+		insert into features (feature_id, description, enabled)
+		values (?, '', 0)
 	`, id); err != nil {
 		db.t.Fatal(err)
 	}

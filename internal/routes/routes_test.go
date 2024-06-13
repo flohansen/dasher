@@ -2,7 +2,6 @@ package routes
 
 import (
 	"bytes"
-	"database/sql"
 	"errors"
 	"io"
 	"net/http"
@@ -77,9 +76,7 @@ func TestRoutes(t *testing.T) {
 
 			featureStore.EXPECT().
 				Upsert(gomock.Any(), sqlc.Feature{
-					FeatureID:   "TOGGLE_ID",
-					Description: sql.NullString{String: "", Valid: false},
-					Enabled:     sql.NullBool{Bool: false, Valid: false},
+					FeatureID: "TOGGLE_ID",
 				}).
 				Return(errors.New("some error"))
 
@@ -99,9 +96,7 @@ func TestRoutes(t *testing.T) {
 
 			featureStore.EXPECT().
 				Upsert(gomock.Any(), sqlc.Feature{
-					FeatureID:   "TOGGLE_ID",
-					Description: sql.NullString{String: "", Valid: false},
-					Enabled:     sql.NullBool{Bool: false, Valid: false},
+					FeatureID: "TOGGLE_ID",
 				}).
 				Return(nil)
 

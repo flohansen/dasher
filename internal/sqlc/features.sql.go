@@ -7,7 +7,6 @@ package sqlc
 
 import (
 	"context"
-	"database/sql"
 )
 
 const deleteFeature = `-- name: DeleteFeature :exec
@@ -57,8 +56,8 @@ returning feature_id, description, enabled
 
 type UpsertFeatureParams struct {
 	FeatureID   string
-	Description sql.NullString
-	Enabled     sql.NullBool
+	Description string
+	Enabled     bool
 }
 
 func (q *Queries) UpsertFeature(ctx context.Context, arg UpsertFeatureParams) error {
