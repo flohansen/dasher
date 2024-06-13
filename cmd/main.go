@@ -33,10 +33,8 @@ func run() error {
 		return errors.Wrap(err, "migrate sqlite3 driver")
 	}
 
-	p := path.Join(*dataPath, "migrations")
-	log.Println(p)
 	m, err := migrate.NewWithDatabaseInstance(
-		fmt.Sprintf("file://%s", p),
+		fmt.Sprintf("file:///migrations"),
 		"sqlite3",
 		driver,
 	)
