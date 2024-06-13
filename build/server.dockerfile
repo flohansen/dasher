@@ -9,6 +9,7 @@ FROM alpine:latest
 RUN apk add --no-cache libc6-compat
 
 COPY --from=builder /usr/src/app/main /main
+COPY --from=builder /usr/src/app/migrations /data/migrations
 
 EXPOSE 3000
 CMD [ "/main" ]
