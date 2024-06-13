@@ -40,7 +40,7 @@ func TestRoutes(t *testing.T) {
 			// given
 			featureStore.EXPECT().
 				GetAll(gomock.Any()).
-				Return([]sqlc.Feature{}, nil)
+				Return(nil, nil)
 
 			// when
 			w := httptest.NewRecorder()

@@ -10,6 +10,12 @@ import (
 	"github.com/flohansen/dasher-server/internal/sqlc"
 )
 
+type GetFeatureResponse struct {
+	FeatureID   string `json:"featureId"`
+	Description string `json:"description"`
+	Enabled     bool   `json:"enabled"`
+}
+
 func (routes *Routes) getFeatures(w http.ResponseWriter, r *http.Request) {
 	features, err := routes.featureStore.GetAll(context.Background())
 	if err != nil {
@@ -18,8 +24,17 @@ func (routes *Routes) getFeatures(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := make([]GetFeatureResponse, len(features))
+	for i, feature := range features {
+		response[i] = GetFeatureResponse{
+			FeatureID:   feature.FeatureID,
+			Description: feature.Description.String,
+			Enabled:     feature.Enabled.Bool,
+		}
+	}
+
 	w.Header().Add("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(features); err != nil {
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Printf("error while encoding features: %v", err)
 	}
 }
