@@ -30,7 +30,7 @@ func run() error {
 
 	driver, err := sqlite3.WithInstance(db, &sqlite3.Config{})
 	if err != nil {
-		return errors.Wrap(err, "migrate")
+		return errors.Wrap(err, "migrate sqlite3 driver")
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
@@ -39,11 +39,11 @@ func run() error {
 		driver,
 	)
 	if err != nil {
-		return errors.Wrap(err, "migrate")
+		return errors.Wrap(err, "migrate new")
 	}
 
 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
-		return errors.Wrap(err, "migrate")
+		return errors.Wrap(err, "migrate up")
 	}
 
 	featureStore := datastore.NewSQLite(db)
