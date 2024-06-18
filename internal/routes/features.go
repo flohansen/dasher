@@ -16,7 +16,7 @@ type GetFeatureResponse struct {
 }
 
 func (routes *Routes) getFeatures(w http.ResponseWriter, r *http.Request) {
-	features, err := routes.featureStore.GetAll(context.Background())
+	features, err := routes.store.GetAll(context.Background())
 	if err != nil {
 		log.Printf("error while fetching all features: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -48,16 +48,18 @@ func (routes *Routes) postFeature(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := routes.featureStore.Upsert(context.Background(), sqlc.Feature(req)); err != nil {
+	if err := routes.store.Upsert(context.Background(), sqlc.Feature(req)); err != nil {
 		log.Printf("error while upserting feature: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
+	routes.notifier.Notify(sqlc.Feature(req))
 }
 
 func (routes *Routes) deleteFeature(w http.ResponseWriter, r *http.Request) {
 	featureID := r.PathValue("featureId")
-	if err := routes.featureStore.Delete(context.Background(), featureID); err != nil {
+	if err := routes.store.Delete(context.Background(), featureID); err != nil {
 		log.Printf("error while deleting feature: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

@@ -13,15 +13,21 @@ type FeatureStore interface {
 	Delete(ctx context.Context, featureID string) error
 }
 
-type Routes struct {
-	mux          *http.ServeMux
-	featureStore FeatureStore
+type Notifier interface {
+	Notify(sqlc.Feature) error
 }
 
-func New(featureStore FeatureStore) *Routes {
+type Routes struct {
+	mux      *http.ServeMux
+	store    FeatureStore
+	notifier Notifier
+}
+
+func New(store FeatureStore, notifier Notifier) *Routes {
 	routes := Routes{
-		mux:          http.NewServeMux(),
-		featureStore: featureStore,
+		mux:      http.NewServeMux(),
+		store:    store,
+		notifier: notifier,
 	}
 
 	routes.mux.HandleFunc("GET /api/v1/features", routes.getFeatures)

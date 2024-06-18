@@ -16,13 +16,14 @@ import (
 
 func TestRoutes(t *testing.T) {
 	ctrl := gomock.NewController(t)
-	featureStore := mocks.NewMockFeatureStore(ctrl)
-	routes := New(featureStore)
+	store := mocks.NewMockFeatureStore(ctrl)
+	notifier := mocks.NewMockNotifier(ctrl)
+	routes := New(store, notifier)
 
 	t.Run("GET /api/v1/features", func(t *testing.T) {
 		t.Run("should return 500 INTERNAL SERVER ERROR", func(t *testing.T) {
 			// given
-			featureStore.EXPECT().
+			store.EXPECT().
 				GetAll(gomock.Any()).
 				Return(nil, errors.New("some error"))
 
@@ -37,7 +38,7 @@ func TestRoutes(t *testing.T) {
 
 		t.Run("should return 200 OK", func(t *testing.T) {
 			// given
-			featureStore.EXPECT().
+			store.EXPECT().
 				GetAll(gomock.Any()).
 				Return(nil, nil)
 
@@ -74,7 +75,7 @@ func TestRoutes(t *testing.T) {
 			// given
 			body := bytes.NewReader([]byte(`{"featureId":"TOGGLE_ID"}`))
 
-			featureStore.EXPECT().
+			store.EXPECT().
 				Upsert(gomock.Any(), sqlc.Feature{
 					FeatureID: "TOGGLE_ID",
 				}).
@@ -94,8 +95,14 @@ func TestRoutes(t *testing.T) {
 			// given
 			body := bytes.NewReader([]byte(`{"featureId":"TOGGLE_ID"}`))
 
-			featureStore.EXPECT().
+			store.EXPECT().
 				Upsert(gomock.Any(), sqlc.Feature{
+					FeatureID: "TOGGLE_ID",
+				}).
+				Return(nil)
+
+			notifier.EXPECT().
+				Notify(sqlc.Feature{
 					FeatureID: "TOGGLE_ID",
 				}).
 				Return(nil)
@@ -114,7 +121,7 @@ func TestRoutes(t *testing.T) {
 	t.Run("DELETE /api/v1/features", func(t *testing.T) {
 		t.Run("should return 500 INTERNAL SERVER ERRROR if delete failed", func(t *testing.T) {
 			// given
-			featureStore.EXPECT().
+			store.EXPECT().
 				Delete(gomock.Any(), "TOGGLE_ID").
 				Return(errors.New("some error"))
 
@@ -130,7 +137,7 @@ func TestRoutes(t *testing.T) {
 
 		t.Run("should return 200 OK", func(t *testing.T) {
 			// given
-			featureStore.EXPECT().
+			store.EXPECT().
 				Delete(gomock.Any(), "TOGGLE_ID").
 				Return(nil)
 

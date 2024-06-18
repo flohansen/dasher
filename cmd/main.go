@@ -3,16 +3,18 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"path"
 
 	"github.com/flohansen/dasher-server/internal/datastore"
+	"github.com/flohansen/dasher-server/internal/notification"
 	"github.com/flohansen/dasher-server/internal/routes"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
 	"github.com/pkg/errors"
+	"google.golang.org/grpc"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/mattn/go-sqlite3"
@@ -34,7 +36,7 @@ func run() error {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		fmt.Sprintf("file:///migrations"),
+		"file:///migrations",
 		"sqlite3",
 		driver,
 	)
@@ -46,8 +48,30 @@ func run() error {
 		return errors.Wrap(err, "migrate up")
 	}
 
-	featureStore := datastore.NewSQLite(db)
-	return http.ListenAndServe(":3000", routes.New(featureStore))
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		return errors.Wrap(err, "net listen")
+	}
+
+	grpcServer := grpc.NewServer()
+	notifier := notification.NewFeatureNotifier(grpcServer)
+	store := datastore.NewSQLite(db)
+	routes := routes.New(store, notifier)
+
+	errs := make(chan error)
+	go func() {
+		if err := grpcServer.Serve(lis); err != nil {
+			errs <- errors.Wrap(err, "grpc server serve")
+		}
+	}()
+
+	go func() {
+		if err := http.ListenAndServe(":3000", routes); err != nil {
+			errs <- errors.Wrap(err, "http listen and serve")
+		}
+	}()
+
+	return <-errs
 }
 
 func main() {
