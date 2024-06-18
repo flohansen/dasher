@@ -6,9 +6,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/flohansen/dasher-server/internal/notification/mocks"
 	"github.com/flohansen/dasher-server/internal/sqlc"
 	"github.com/flohansen/dasher-server/proto"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
@@ -21,9 +23,11 @@ func bufDialer(lis *bufconn.Listener) func(context.Context, string) (net.Conn, e
 }
 
 func TestFeatureNotifier(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	store := mocks.NewMockFeatureStore(ctrl)
 	lis := bufconn.Listen(2048)
 	s := grpc.NewServer()
-	notifier := NewFeatureNotifier(s)
+	notifier := NewFeatureNotifier(s, store)
 
 	go func() {
 		s.Serve(lis)
@@ -32,6 +36,11 @@ func TestFeatureNotifier(t *testing.T) {
 	t.Run("Notify", func(t *testing.T) {
 		t.Run("should broadcast the change", func(t *testing.T) {
 			// given
+			store.EXPECT().
+				GetAll(gomock.Any()).
+				Return([]sqlc.Feature{}, nil).
+				Times(2)
+
 			ctx := context.Background()
 			client1 := createClient(t, ctx, bufDialer(lis))
 			stream1, err := client1.SubscribeFeatureChanges(ctx, &proto.FeatureSubscription{})

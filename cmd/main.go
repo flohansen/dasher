@@ -26,8 +26,8 @@ func run() error {
 	}
 
 	rpc := grpc.NewServer()
-	notifier := notification.NewFeatureNotifier(rpc)
 	store := datastore.NewSQLite(db)
+	notifier := notification.NewFeatureNotifier(rpc, store)
 	migrator := datastore.NewSQLMigrator(db)
 	routes := routes.New(store, notifier)
 

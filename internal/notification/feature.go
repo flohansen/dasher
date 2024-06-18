@@ -1,6 +1,7 @@
 package notification
 
 import (
+	"context"
 	"sync"
 
 	"github.com/flohansen/dasher-server/internal/sqlc"
@@ -8,15 +9,21 @@ import (
 	"google.golang.org/grpc"
 )
 
+type FeatureStore interface {
+	GetAll(ctx context.Context) ([]sqlc.Feature, error)
+}
+
 type FeatureNotifier struct {
 	proto.UnimplementedFeatureStateServiceServer
+	store   FeatureStore
 	streams map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}
 	mu      *sync.Mutex
 }
 
-func NewFeatureNotifier(grpcServer grpc.ServiceRegistrar) *FeatureNotifier {
+func NewFeatureNotifier(grpcServer grpc.ServiceRegistrar, store FeatureStore) *FeatureNotifier {
 	notifier := FeatureNotifier{
 		streams: make(map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}),
+		store:   store,
 		mu:      &sync.Mutex{},
 	}
 	proto.RegisterFeatureStateServiceServer(grpcServer, &notifier)
@@ -27,6 +34,15 @@ func (n *FeatureNotifier) SubscribeFeatureChanges(_ *proto.FeatureSubscription, 
 	n.mu.Lock()
 	n.streams[stream] = struct{}{}
 	n.mu.Unlock()
+
+	features, err := n.store.GetAll(stream.Context())
+	if err != nil {
+		return err
+	}
+
+	for _, feature := range features {
+		n.Notify(feature)
+	}
 
 	<-stream.Context().Done()
 
