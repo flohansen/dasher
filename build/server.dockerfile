@@ -1,6 +1,7 @@
 FROM golang:1.22-alpine AS builder
 RUN apk update && apk add gcc musl-dev
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+RUN go install go.uber.org/mock/mockgen@latest
 
 WORKDIR /usr/src/app
 COPY . .
