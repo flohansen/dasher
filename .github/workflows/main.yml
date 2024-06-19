@@ -18,6 +18,9 @@ jobs:
       with:
         go-version: '1.22'
 
+    - name: Generate files
+      run: make generate
+
     - name: Go test
       run: go test ./... -race
 
