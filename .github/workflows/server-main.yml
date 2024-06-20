@@ -3,7 +3,7 @@ name: Server CI/CD Pipeline
 on:
   push:
     paths:
-      - 'server'
+      - 'server/**'
       - '.github/workflows/server-main.yml'
     branches:
       - main
