@@ -2,13 +2,19 @@ name: CI/CD Pipeline
 
 on:
   push:
+    paths:
+      - './server'
+      - './.github/workflows/server-main.yml'
     branches:
       - main
 
 jobs:
   test:
-    runs-on: ubuntu-latest
     name: Run tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./server
     steps:
     - name: Git checkout
       uses: actions/checkout@v4
@@ -41,9 +47,12 @@ jobs:
       run: go test ./... -race
 
   docker:
+    name: Deliver to Docker Hub
     needs: test
     runs-on: ubuntu-latest
-    name: Deliver to Docker Hub
+    defaults:
+      run:
+        working-directory: ./server
     steps:
     - name: Git checkout
       uses: actions/checkout@v4
