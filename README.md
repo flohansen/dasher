@@ -1,6 +1,6 @@
 # Dasher: Your Agile Feature Toggle and Experimentation Engine
 
-![ci pipeline](https://github.com/flohansen/dasher-server/actions/workflows/main.yml/badge.svg)
+![ci pipeline](https://github.com/flohansen/dasher-server/actions/workflows/server-main.yml/badge.svg)
 
 Dasher empowers startups and agile teams to rapidly iterate, test, and validate
 ideas without costly upfront development.
