@@ -39,6 +39,6 @@ optimize campaigns.
 - Engineering Teams: Mitigate the risk of releasing new code by gradually
 rolling it out.
 
-## Get Started
+## Getting Started
 
 Coming soon
