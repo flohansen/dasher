@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dasher-server-pod
+  labels:
+    app: dasher-server
+spec:
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: dasher-server-pvc
+  containers:
+    - name: dasher-server
+      image: ghcr.io/flohansen/dasher-server:latest
+      ports:
+        - containerPort: 3000
+          name: web
+      volumeMounts:
+        - mountPath: "/data"
+          name: data

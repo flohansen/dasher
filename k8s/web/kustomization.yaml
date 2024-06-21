@@ -1,0 +1,4 @@
+resources:
+- web.deploy.yaml
+- web.svc.yaml
+- web.ing.yaml
