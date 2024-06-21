@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "github.com/flohansen/dasher-go/proto";
+
+package feature;
+
+// Service for subscribing to toggle changes
+service FeatureStateService {
+    rpc SubscribeFeatureChanges(FeatureSubscription) returns (stream Feature);
+}
+
+// Main message for feature toggle states
+message Feature {
+    string feature_id = 1;
+    bool enabled = 2;
+}
+
+// Empty message for subscription request
+message FeatureSubscription {}
