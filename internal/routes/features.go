@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/flohansen/dasher-server/internal/sqlc"
+	"github.com/flohansen/dasher/internal/sqlc"
 )
 
 type GetFeatureResponse struct {

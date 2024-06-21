@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/flohansen/dasher-server/internal/notification/mocks"
-	"github.com/flohansen/dasher-server/internal/sqlc"
-	"github.com/flohansen/dasher-server/proto"
+	"github.com/flohansen/dasher/internal/notification/mocks"
+	"github.com/flohansen/dasher/internal/sqlc"
+	"github.com/flohansen/dasher/proto"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc"

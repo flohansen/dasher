@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
-	"github.com/flohansen/dasher-server/internal/sqlc"
-	"github.com/flohansen/dasher-server/proto"
+	"github.com/flohansen/dasher/internal/sqlc"
+	"github.com/flohansen/dasher/proto"
 	"google.golang.org/grpc"
 )
 

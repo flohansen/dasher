@@ -8,8 +8,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/flohansen/dasher-server/internal/routes/mocks"
-	"github.com/flohansen/dasher-server/internal/sqlc"
+	"github.com/flohansen/dasher/internal/routes/mocks"
+	"github.com/flohansen/dasher/internal/sqlc"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 )

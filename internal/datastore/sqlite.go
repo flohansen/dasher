@@ -3,7 +3,7 @@ package datastore
 import (
 	"context"
 
-	"github.com/flohansen/dasher-server/internal/sqlc"
+	"github.com/flohansen/dasher/internal/sqlc"
 )
 
 type SQLiteDatastore struct {

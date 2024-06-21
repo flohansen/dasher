@@ -6,10 +6,10 @@ import (
 	"log"
 	"path"
 
-	"github.com/flohansen/dasher-server/internal/api"
-	"github.com/flohansen/dasher-server/internal/datastore"
-	"github.com/flohansen/dasher-server/internal/notification"
-	"github.com/flohansen/dasher-server/internal/routes"
+	"github.com/flohansen/dasher/internal/api"
+	"github.com/flohansen/dasher/internal/datastore"
+	"github.com/flohansen/dasher/internal/notification"
+	"github.com/flohansen/dasher/internal/routes"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 
