@@ -1,5 +1,6 @@
 # Dasher: Your Agile Feature Toggle and Experimentation Engine
 
+![license](https://img.shields.io/github/license/flohansen/dasher)
 ![server ci/cd](https://github.com/flohansen/dasher-server/actions/workflows/server-main.yml/badge.svg)
 ![web ci/cd](https://github.com/flohansen/dasher-server/actions/workflows/web-main.yml/badge.svg)
 
