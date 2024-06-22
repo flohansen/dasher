@@ -3,7 +3,13 @@ name: Server CI/CD Pipeline
 on:
   push:
     paths:
-      - 'server/**'
+      - 'build/server.dockerfile'
+      - 'cmd/server/**'
+      - 'deployment/server/**'
+      - 'internal/**'
+      - 'pkg/**'
+      - 'migrations/**'
+      - 'queries/**'
       - '.github/workflows/server-main.yml'
     branches:
       - main
