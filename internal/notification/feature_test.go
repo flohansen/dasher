@@ -8,7 +8,7 @@ import (
 
 	"github.com/flohansen/dasher/internal/notification/mocks"
 	"github.com/flohansen/dasher/internal/sqlc"
-	"github.com/flohansen/dasher/proto"
+	"github.com/flohansen/dasher/pkg/proto"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"google.golang.org/grpc"
