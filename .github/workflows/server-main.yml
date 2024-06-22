@@ -47,9 +47,6 @@ jobs:
     name: Deliver to Docker Hub
     needs: test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./server
     steps:
     - name: Git checkout
       uses: actions/checkout@v4
