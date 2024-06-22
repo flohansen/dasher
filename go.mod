@@ -5,7 +5,6 @@ go 1.22.3
 toolchain go1.22.4
 
 require (
-	github.com/flohansen/dasher/go v0.0.0-20240621002326-f34f9128a6c4
 	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/pkg/errors v0.9.1
