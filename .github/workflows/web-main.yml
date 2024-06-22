@@ -1,0 +1,33 @@
+name: Web CI/CD Pipeline
+
+on:
+  push:
+    paths:
+      - 'web/**'
+      - '.github/workflows/web-main.yml'
+    branches:
+      - main
+
+jobs:
+  docker:
+    name: Deliver to Docker Hub
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v4
+
+    - name: Login to GHCR
+      run: |
+        echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u flohansen --password-stdin
+
+    - name: Docker build
+      run: |
+        docker build -t ghcr.io/flohansen/dasher-web:latest -f build/web.dockerfile .
+
+    - name: Docker push
+      run: |
+        docker push ghcr.io/flohansen/dasher-web:latest
+
