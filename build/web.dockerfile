@@ -1,6 +1,6 @@
 FROM node:lts-alpine AS builder
 WORKDIR /usr/src/app
-COPY ./web .
+COPY . .
 RUN yarn
 RUN yarn build
 
