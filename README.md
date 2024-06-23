@@ -2,7 +2,6 @@
 
 ![license](https://img.shields.io/github/license/flohansen/dasher)
 ![server ci/cd](https://github.com/flohansen/dasher-server/actions/workflows/server-main.yml/badge.svg)
-![web ci/cd](https://github.com/flohansen/dasher-server/actions/workflows/web-main.yml/badge.svg)
 
 Dasher empowers startups and agile teams to rapidly iterate, test, and validate
 ideas without costly upfront development.
@@ -43,4 +42,74 @@ rolling it out.
 
 ## Getting Started
 
-Coming soon
+### Start the server
+
+Using the official Docker image
+
+```bash
+docker run --name my-dasher-server -p 3000:3000 -p 50051:50051 ghcr.io/flohansen/dasher-server:latest
+```
+
+### Define feature toggles in your application
+
+```bash
+go get github.com/flohansen/dasher
+```
+
+```go
+package toggles
+
+import (
+    "github.com/flohansen/dasher/pkg/dasher"
+)
+
+var (
+    VerboseLogging = dasher.NewFeature(dasher.FeatureOptions{
+        Name: "USE_VERBOSE_LOGGING",
+        Description: "If the application should log more verbose",
+    })
+
+    // Add more features ...
+)
+
+func init() {
+    // This registers the feature. The dasher server will create a toggle, if
+    // it does not exist.
+    dasher.MustRegister(VerboseLogging)
+
+    // Register more features ...
+}
+```
+```go
+package main
+
+import (
+    "context"
+    "log"
+    "os"
+
+    "github.com/flohansen/dasher/pkg/dasher"
+)
+
+var (
+    dasherServerAddr = os.Getenv("DASHER_SERVER_ADDR")
+)
+
+func main() {
+    ctx := context.Background()
+
+    // This will subscribe to any changes related to the defined features. On
+    // every change the states of the features will be updated.
+    go dasher.Listen(ctx, dasherServerAddr)
+
+    for {
+        // Check the state of the feature toggle. The "Enabled" property is
+        // being synchronized with the feature toggle state of the server.
+        if toggles.VerboseLogging.Enabled {
+            log.Println("wait one second...")
+        }
+
+        time.Sleep(time.Second)
+    }
+}
+```

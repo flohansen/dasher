@@ -25,7 +25,7 @@ func (mig *SQLMigrator) Migrate() error {
 	}
 
 	m, err := migrate.NewWithDatabaseInstance(
-		"file:///migrations",
+		"file://migrations",
 		"sqlite3",
 		driver,
 	)

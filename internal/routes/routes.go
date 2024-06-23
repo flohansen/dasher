@@ -30,6 +30,10 @@ func New(store FeatureStore, notifier Notifier) *Routes {
 		notifier: notifier,
 	}
 
+	httpFS := http.FileServer(http.Dir("dist"))
+	routes.mux.Handle("GET /", httpFS)
+	routes.mux.Handle("GET /assets/", httpFS)
+
 	routes.mux.HandleFunc("GET /api/v1/features", routes.getFeatures)
 	routes.mux.HandleFunc("POST /api/v1/features", routes.postFeature)
 	routes.mux.HandleFunc("DELETE /api/v1/features/{featureId}", routes.deleteFeature)

@@ -9,15 +9,8 @@ spec:
       paths:
         - backend:
             service:
-              name: dasher-web-service
-              port:
-                name: web
-          path: /
-          pathType: Prefix
-        - backend:
-            service:
               name: dasher-server-service
               port:
                 name: web
-          path: /api
+          path: /
           pathType: Prefix

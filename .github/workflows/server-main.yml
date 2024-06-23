@@ -5,11 +5,12 @@ on:
     paths:
       - 'build/server.dockerfile'
       - 'cmd/server/**'
-      - 'deployment/server/**'
+      - 'deployment/**'
       - 'internal/**'
       - 'pkg/**'
       - 'migrations/**'
       - 'queries/**'
+      - 'web/**'
       - '.github/workflows/server-main.yml'
     branches:
       - main
