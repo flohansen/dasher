@@ -34,7 +34,7 @@ func NewFeature(opts FeatureParams) *Feature {
 	}
 }
 
-func Connect(ctx context.Context, addr string) {
+func Listen(ctx context.Context, addr string) {
 	conn, err := grpc.NewClient(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		errors.Wrap(err, "create new grpc client")
