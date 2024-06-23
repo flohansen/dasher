@@ -6,6 +6,7 @@ import (
 
 	"github.com/flohansen/dasher/internal/sqlc"
 	"github.com/flohansen/dasher/pkg/proto"
+	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 )
 
@@ -17,14 +18,12 @@ type FeatureStore interface {
 type FeatureNotifier struct {
 	proto.UnimplementedFeatureStateServiceServer
 	store         FeatureStore
-	streams       map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}
 	subscriptions map[string]map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}
 	mu            *sync.Mutex
 }
 
 func NewFeatureNotifier(grpcServer grpc.ServiceRegistrar, store FeatureStore) *FeatureNotifier {
 	notifier := FeatureNotifier{
-		streams:       make(map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}),
 		subscriptions: make(map[string]map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}),
 		store:         store,
 		mu:            &sync.Mutex{},
@@ -33,8 +32,10 @@ func NewFeatureNotifier(grpcServer grpc.ServiceRegistrar, store FeatureStore) *F
 	return &notifier
 }
 
-func (n *FeatureNotifier) SubscribeFeatureChanges(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) error {
+func (n *FeatureNotifier) registerSubscriptions(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) error {
 	n.mu.Lock()
+	defer n.mu.Unlock()
+
 	for _, f := range subscription.FeatureToggles {
 		if _, ok := n.subscriptions[f.FeatureId]; !ok {
 			n.subscriptions[f.FeatureId] = make(map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{})
@@ -42,13 +43,41 @@ func (n *FeatureNotifier) SubscribeFeatureChanges(subscription *proto.FeatureSub
 
 		n.subscriptions[f.FeatureId][stream] = struct{}{}
 	}
-	n.mu.Unlock()
 
 	features, err := n.store.GetAll(stream.Context())
 	if err != nil {
 		return err
 	}
 
+	featuresAdded, err := n.createNonExistingFeatures(stream.Context(), subscription, features)
+	if err != nil {
+		return err
+	}
+
+	// Initially send states of all features
+	for _, feature := range append(features, featuresAdded...) {
+		err := stream.Send(&proto.FeatureToggleChange{
+			FeatureId: feature.FeatureID,
+			Enabled:   feature.Enabled,
+		})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (n *FeatureNotifier) unregisterSubscriptions(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+
+	for _, f := range subscription.FeatureToggles {
+		delete(n.subscriptions[f.FeatureId], stream)
+	}
+}
+
+func (n *FeatureNotifier) createNonExistingFeatures(ctx context.Context, subscription *proto.FeatureSubscription, features []sqlc.Feature) ([]sqlc.Feature, error) {
 	featureLookup := make(map[string]sqlc.Feature)
 	for _, f := range features {
 		featureLookup[f.FeatureID] = f
@@ -66,21 +95,21 @@ func (n *FeatureNotifier) SubscribeFeatureChanges(subscription *proto.FeatureSub
 	}
 
 	for _, f := range featuresToAdd {
-		n.store.Upsert(stream.Context(), f)
+		if err := n.store.Upsert(ctx, f); err != nil {
+			return nil, errors.Wrap(err, "feature store upsert")
+		}
 	}
 
-	for _, feature := range features {
-		n.Notify(feature)
-	}
+	return featuresToAdd, nil
+}
 
+func (n *FeatureNotifier) SubscribeFeatureChanges(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) error {
+	n.registerSubscriptions(subscription, stream)
+
+	// Wait for client closing the connection
 	<-stream.Context().Done()
 
-	n.mu.Lock()
-	for _, f := range subscription.FeatureToggles {
-		delete(n.subscriptions[f.FeatureId], stream)
-	}
-	n.mu.Unlock()
-
+	n.unregisterSubscriptions(subscription, stream)
 	return nil
 }
 
