@@ -2,8 +2,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: dasher-ingress
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
   rules:
@@ -15,4 +13,11 @@ spec:
               port:
                 name: web
           path: /
+          pathType: Prefix
+        - backend:
+            service:
+              name: dasher-server-service
+              port:
+                name: web
+          path: /api
           pathType: Prefix

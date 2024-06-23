@@ -2,3 +2,6 @@ resources:
 - server.pvc.yaml
 - server.pod.yaml
 - server.svc.yaml
+- web.deploy.yaml
+- web.svc.yaml
+- ingress.yaml
