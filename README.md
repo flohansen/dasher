@@ -44,10 +44,16 @@ rolling it out.
 
 ### Start the server
 
-Using the official Docker image
+You can use the official Docker image. Because Dasher is a stateful
+application, make sure to mount a volume to the container. The following
+example uses the current working directory as data volume.
 
 ```bash
-docker run --name my-dasher-server -p 3000:3000 -p 50051:50051 ghcr.io/flohansen/dasher-server:latest
+docker run --name my-dasher-server \
+    -p 3000:3000 \
+    -p 50051:50051 \
+    -v .:/data \
+    ghcr.io/flohansen/dasher-server:latest
 ```
 
 ### Define feature toggles in your application
