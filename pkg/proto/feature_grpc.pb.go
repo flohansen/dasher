@@ -49,7 +49,7 @@ func (c *featureStateServiceClient) SubscribeFeatureChanges(ctx context.Context,
 }
 
 type FeatureStateService_SubscribeFeatureChangesClient interface {
-	Recv() (*Feature, error)
+	Recv() (*FeatureToggleChange, error)
 	grpc.ClientStream
 }
 
@@ -57,8 +57,8 @@ type featureStateServiceSubscribeFeatureChangesClient struct {
 	grpc.ClientStream
 }
 
-func (x *featureStateServiceSubscribeFeatureChangesClient) Recv() (*Feature, error) {
-	m := new(Feature)
+func (x *featureStateServiceSubscribeFeatureChangesClient) Recv() (*FeatureToggleChange, error) {
+	m := new(FeatureToggleChange)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func _FeatureStateService_SubscribeFeatureChanges_Handler(srv interface{}, strea
 }
 
 type FeatureStateService_SubscribeFeatureChangesServer interface {
-	Send(*Feature) error
+	Send(*FeatureToggleChange) error
 	grpc.ServerStream
 }
 
@@ -110,7 +110,7 @@ type featureStateServiceSubscribeFeatureChangesServer struct {
 	grpc.ServerStream
 }
 
-func (x *featureStateServiceSubscribeFeatureChangesServer) Send(m *Feature) error {
+func (x *featureStateServiceSubscribeFeatureChangesServer) Send(m *FeatureToggleChange) error {
 	return x.ServerStream.SendMsg(m)
 }
 

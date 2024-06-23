@@ -6,14 +6,21 @@ package feature;
 
 // Service for subscribing to toggle changes
 service FeatureStateService {
-    rpc SubscribeFeatureChanges(FeatureSubscription) returns (stream Feature);
+    rpc SubscribeFeatureChanges(FeatureSubscription) returns (stream FeatureToggleChange);
+}
+
+message FeatureToggle {
+    string feature_id = 1;
+    string description = 2;
 }
 
 // Main message for feature toggle states
-message Feature {
+message FeatureToggleChange {
     string feature_id = 1;
     bool enabled = 2;
 }
 
 // Empty message for subscription request
-message FeatureSubscription {}
+message FeatureSubscription {
+    repeated FeatureToggle featureToggles = 1;
+}

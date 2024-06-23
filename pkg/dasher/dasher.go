@@ -40,8 +40,18 @@ func Connect(ctx context.Context, addr string) {
 		errors.Wrap(err, "create new grpc client")
 	}
 
+	featureToggles := make([]*proto.FeatureToggle, 0, len(registeredFeatures))
+	for featureID, feature := range registeredFeatures {
+		featureToggles = append(featureToggles, &proto.FeatureToggle{
+			FeatureId:   featureID,
+			Description: feature.Description,
+		})
+	}
+
 	client := proto.NewFeatureStateServiceClient(conn)
-	stream, err := client.SubscribeFeatureChanges(ctx, &proto.FeatureSubscription{})
+	stream, err := client.SubscribeFeatureChanges(ctx, &proto.FeatureSubscription{
+		FeatureToggles: featureToggles,
+	})
 	if err != nil {
 		log.Fatal(errors.Wrap(err, "subscribe to feature changes"))
 	}

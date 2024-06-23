@@ -41,15 +41,34 @@ func TestFeatureNotifier(t *testing.T) {
 				Return([]sqlc.Feature{}, nil).
 				Times(2)
 
+			store.EXPECT().
+				Upsert(gomock.Any(), sqlc.Feature{
+					FeatureID: "SOME_FEATURE_ID",
+				}).
+				Return(nil).
+				Times(2)
+
 			ctx := context.Background()
 			client1 := createClient(t, ctx, bufDialer(lis))
-			stream1, err := client1.SubscribeFeatureChanges(ctx, &proto.FeatureSubscription{})
+			stream1, err := client1.SubscribeFeatureChanges(ctx, &proto.FeatureSubscription{
+				FeatureToggles: []*proto.FeatureToggle{
+					{
+						FeatureId: "SOME_FEATURE_ID",
+					},
+				},
+			})
 			if err != nil {
 				t.Fatal(err)
 			}
 
 			client2 := createClient(t, ctx, bufDialer(lis))
-			stream2, err := client2.SubscribeFeatureChanges(ctx, &proto.FeatureSubscription{})
+			stream2, err := client2.SubscribeFeatureChanges(ctx, &proto.FeatureSubscription{
+				FeatureToggles: []*proto.FeatureToggle{
+					{
+						FeatureId: "SOME_FEATURE_ID",
+					},
+				},
+			})
 			if err != nil {
 				t.Fatal(err)
 			}
