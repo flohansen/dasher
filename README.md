@@ -40,6 +40,10 @@ optimize campaigns.
 - Engineering Teams: Mitigate the risk of releasing new code by gradually
 rolling it out.
 
+## Preview
+
+![preview image](./docs/img/showcase.png)
+
 ## Getting Started
 
 ### Start the server
