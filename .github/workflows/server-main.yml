@@ -51,7 +51,7 @@ jobs:
       run: go test ./... -race
 
   docker:
-    name: Deliver to Docker Hub
+    name: Deliver
     needs: test
     runs-on: ubuntu-latest
     steps:
