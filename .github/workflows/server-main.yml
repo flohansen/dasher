@@ -1,11 +1,10 @@
-name: Server CI/CD Pipeline
+name: Server CI/CD
 
 on:
   push:
     paths:
       - 'build/server.dockerfile'
       - 'cmd/server/**'
-      - 'deployment/**'
       - 'internal/**'
       - 'pkg/**'
       - 'migrations/**'

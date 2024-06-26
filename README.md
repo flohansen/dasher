@@ -2,6 +2,7 @@
 
 ![license](https://img.shields.io/github/license/flohansen/dasher)
 ![server ci/cd](https://github.com/flohansen/dasher-server/actions/workflows/server-main.yml/badge.svg)
+![helm release](https://github.com/flohansen/dasher-server/actions/workflows/helm-release.yml/badge.svg)
 
 Dasher empowers startups and agile teams to rapidly iterate, test, and validate
 ideas without costly upfront development.
