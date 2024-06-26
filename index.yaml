@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  dasher:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-06-26T21:56:05.076547745Z"
+    description: The agile feature toggle and experimentation engine
+    digest: be2872d9bde8fbaa21c68f0f79f66ce1430daf1c51b31b79192e4ba701611228
+    name: dasher
+    type: application
+    urls:
+    - https://github.com/flohansen/dasher/releases/download/dasher-0.1.0/dasher-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-06-26T21:56:05.076554167Z"
