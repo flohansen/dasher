@@ -9,6 +9,16 @@
 # issue since the load on the application will not affect the server.
 replicas: 1
 
+# Use this to deploy a service and expose the server.
+service:
+  enabled: true
+  type: ClusterIP
+  # If type is ClusterIP
+  clusterIP: ""
+  # If type is LoadBalancer
+  loadBalancerIP: ""
+  loadBalancerClass: ""
+
 # Use this to enable ingress deployment. Be sure to setup the ingress controller
 # properly.
 ingress:

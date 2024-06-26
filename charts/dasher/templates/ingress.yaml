@@ -4,8 +4,8 @@ kind: Ingress
 metadata:
   name: {{ include "dasher.fullname" . }}
 spec:
-  {{- if .Values.ingress.ingressClassName }}
-  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- with .Values.ingress.ingressClassName }}
+  ingressClassName: {{ . }}
   {{- end }}
   rules:
   - http:
