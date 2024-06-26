@@ -1,4 +1,4 @@
 resources:
-- server.pod.yaml
+- server.statefulset.yaml
 - server.svc.yaml
 - ingress.yaml
