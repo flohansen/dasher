@@ -1,4 +1,4 @@
 resources:
 - server.statefulset.yaml
-- server.svc.yaml
+- server.service.yaml
 - ingress.yaml
