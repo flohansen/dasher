@@ -26,4 +26,5 @@ ingress:
   ingressClassName: ""
 
 storage:
+  storageClassName: standard
   size: 1G

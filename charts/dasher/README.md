@@ -27,4 +27,5 @@ helm uninstall <release-name>
 | `service.loadBalancerIP` | The IP address of the load balancer. Only used when `service.type` is `LoadBalancer`. | `""` |
 | `ingress.enabled` | If an ingress should be deployed. Make sure to setup a proper ingress controller e.g. [nginx](https://docs.nginx.com/nginx-ingress-controller/). | `false` |
 | `ingress.ingressClassName` | The ingress class name (like `nginx`) | `""` |
+| `storage.storageClassName` | The class name for the storage. | `standard` |
 | `storage.size` | The size of the persistent volume. This is being used to save the application state (in SQLite). | `1G` |
