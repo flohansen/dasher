@@ -13,7 +13,7 @@ spec:
       - path: /
         backend:
           service:
-            name: {{ include "dasher.fullname" }}
+            name: {{ include "dasher.fullname" . }}
             port:
               name: web
         pathType: Prefix
