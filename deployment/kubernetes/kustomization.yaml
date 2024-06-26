@@ -1,5 +1,4 @@
 resources:
-- server.pvc.yaml
 - server.pod.yaml
 - server.svc.yaml
 - ingress.yaml
