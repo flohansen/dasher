@@ -44,10 +44,29 @@ rolling it out.
 
 ![preview image](./docs/img/showcase.png)
 
-## Getting Started
+## Quick Start
 
-### Start the server
+### Using Helm Chart
+Look at [the chart](charts/dasher) for more information about possible configuration parameters.
+```bash
+helm repo add dasher https://flohansen.github.io/dasher
+helm repo update
+helm install <release-name> dasher/dasher
+```
 
+### Using Kustomize
+#### By cloning the repository
+```bash
+git clone https://github.com/flohansen/dasher && cd dasher
+kubectl apply -k deployment/kubernetes
+```
+
+#### By using github directly
+```bash
+kubectl apply -k https://github.com/flohansen/dasher/deployment/kubernetes
+```
+
+### Using docker
 You can use the official Docker image. Because Dasher is a stateful
 application, make sure to mount a volume to the container. The following
 example uses the current working directory as data volume.
@@ -60,7 +79,7 @@ docker run --name my-dasher-server \
     ghcr.io/flohansen/dasher-server:latest
 ```
 
-### Define feature toggles in your application
+### Use it in your application
 
 ```bash
 go get github.com/flohansen/dasher
