@@ -3,7 +3,7 @@
 ## Install
 
 ```bash
-helm install <release-name> 
+helm install <release-name> dasher/dasher
 ```
 
 ## Configuration
