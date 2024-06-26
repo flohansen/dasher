@@ -1,0 +1,19 @@
+# Default values for dasher-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# It is not recommended to set this value different to 1, because it is not
+# possible to change the database type for now. Setting the value to n > 1 would
+# result in n pods with each having its own SQLite database attached.
+# Replication using SQLite is not supported yet. Anyways, this should not be an
+# issue since the load on the application will not affect the server.
+replicas: 1
+
+# Use this to enable ingress deployment. Be sure to setup the ingress controller
+# properly.
+ingress:
+  enabled: false
+  ingressClassName: ""
+
+storage:
+  size: 1G
