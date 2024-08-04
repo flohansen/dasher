@@ -10,15 +10,15 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-type SQLMigrator struct {
+type SQLiteMigrator struct {
 	db *sql.DB
 }
 
-func NewSQLMigrator(db *sql.DB) *SQLMigrator {
-	return &SQLMigrator{db}
+func NewSQLiteMigrator(db *sql.DB) *SQLiteMigrator {
+	return &SQLiteMigrator{db}
 }
 
-func (mig *SQLMigrator) Migrate() error {
+func (mig *SQLiteMigrator) Migrate() error {
 	driver, err := sqlite3.WithInstance(mig.db, &sqlite3.Config{})
 	if err != nil {
 		return errors.Wrap(err, "migrate sqlite3 driver")

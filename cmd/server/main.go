@@ -31,7 +31,7 @@ func run() error {
 	grpcServer := grpc.NewServer()
 	store := repository.NewFeatureSQLite(db)
 	notifier := feature.NewService(grpcServer, store)
-	migrator := repository.NewSQLMigrator(db)
+	migrator := repository.NewSQLiteMigrator(db)
 	routes := routes.New(store, notifier)
 
 	return api.New(
