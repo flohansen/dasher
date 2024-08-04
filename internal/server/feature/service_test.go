@@ -1,4 +1,4 @@
-package notification
+package feature
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/flohansen/dasher/internal/notification/mocks"
+	"github.com/flohansen/dasher/internal/server/feature/mocks"
 	"github.com/flohansen/dasher/internal/sqlc"
 	"github.com/flohansen/dasher/pkg/proto"
 	"github.com/stretchr/testify/assert"
@@ -22,12 +22,12 @@ func bufDialer(lis *bufconn.Listener) func(context.Context, string) (net.Conn, e
 	}
 }
 
-func TestFeatureNotifier(t *testing.T) {
+func TestService(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	store := mocks.NewMockFeatureStore(ctrl)
 	lis := bufconn.Listen(2048)
 	s := grpc.NewServer()
-	notifier := NewFeatureNotifier(s, store)
+	notifier := NewService(s, store)
 
 	go func() {
 		s.Serve(lis)

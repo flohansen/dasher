@@ -1,4 +1,6 @@
-package notification
+//go:generate mockgen -source=service.go -destination=mocks/service_mock.go -package=mocks
+
+package feature
 
 import (
 	"context"
@@ -15,24 +17,23 @@ type FeatureStore interface {
 	Upsert(ctx context.Context, feature sqlc.Feature) error
 }
 
-type FeatureNotifier struct {
+type Service struct {
 	proto.UnimplementedFeatureStateServiceServer
 	store         FeatureStore
 	subscriptions map[string]map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}
-	mu            *sync.Mutex
+	mu            sync.Mutex
 }
 
-func NewFeatureNotifier(grpcServer grpc.ServiceRegistrar, store FeatureStore) *FeatureNotifier {
-	notifier := FeatureNotifier{
+func NewService(grpcServer grpc.ServiceRegistrar, store FeatureStore) *Service {
+	notifier := Service{
 		subscriptions: make(map[string]map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}),
 		store:         store,
-		mu:            &sync.Mutex{},
 	}
 	proto.RegisterFeatureStateServiceServer(grpcServer, &notifier)
 	return &notifier
 }
 
-func (n *FeatureNotifier) registerSubscriptions(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) error {
+func (n *Service) registerSubscriptions(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) error {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 
@@ -68,7 +69,7 @@ func (n *FeatureNotifier) registerSubscriptions(subscription *proto.FeatureSubsc
 	return nil
 }
 
-func (n *FeatureNotifier) unregisterSubscriptions(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) {
+func (n *Service) unregisterSubscriptions(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 
@@ -77,7 +78,7 @@ func (n *FeatureNotifier) unregisterSubscriptions(subscription *proto.FeatureSub
 	}
 }
 
-func (n *FeatureNotifier) createNonExistingFeatures(ctx context.Context, subscription *proto.FeatureSubscription, features []sqlc.Feature) ([]sqlc.Feature, error) {
+func (n *Service) createNonExistingFeatures(ctx context.Context, subscription *proto.FeatureSubscription, features []sqlc.Feature) ([]sqlc.Feature, error) {
 	featureLookup := make(map[string]sqlc.Feature)
 	for _, f := range features {
 		featureLookup[f.FeatureID] = f
@@ -103,7 +104,7 @@ func (n *FeatureNotifier) createNonExistingFeatures(ctx context.Context, subscri
 	return featuresToAdd, nil
 }
 
-func (n *FeatureNotifier) SubscribeFeatureChanges(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) error {
+func (n *Service) SubscribeFeatureChanges(subscription *proto.FeatureSubscription, stream proto.FeatureStateService_SubscribeFeatureChangesServer) error {
 	n.registerSubscriptions(subscription, stream)
 
 	// Wait for client closing the connection
@@ -113,7 +114,7 @@ func (n *FeatureNotifier) SubscribeFeatureChanges(subscription *proto.FeatureSub
 	return nil
 }
 
-func (n *FeatureNotifier) Notify(feature sqlc.Feature) error {
+func (n *Service) Notify(feature sqlc.Feature) error {
 	n.mu.Lock()
 	defer n.mu.Unlock()
 

@@ -1,3 +1,5 @@
+//go:generate mockgen -source=routes.go -destination=mocks/routes_mock.go -package=mocks
+
 package routes
 
 import (

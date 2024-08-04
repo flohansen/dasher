@@ -1,4 +1,6 @@
-package datastore
+//go:generate sqlc -f ../../sqlc.yaml generate
+
+package repository
 
 import (
 	"context"
