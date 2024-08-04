@@ -4,12 +4,14 @@ import (
 	"database/sql"
 	"flag"
 	"log"
+	"net"
+	"net/http"
 	"path"
 
-	"github.com/flohansen/dasher/internal/api"
 	"github.com/flohansen/dasher/internal/repository"
 	"github.com/flohansen/dasher/internal/routes"
 	"github.com/flohansen/dasher/internal/server/feature"
+	"github.com/flohansen/dasher/pkg/proto"
 	"github.com/pkg/errors"
 	"google.golang.org/grpc"
 
@@ -28,20 +30,38 @@ func run() error {
 		return errors.Wrap(err, "sql open")
 	}
 
-	grpcServer := grpc.NewServer()
-	store := repository.NewFeatureSQLite(db)
-	notifier := feature.NewService(grpcServer, store)
 	migrator := repository.NewSQLiteMigrator(db)
-	routes := routes.New(store, notifier)
+	if err := migrator.Migrate(); err != nil {
+		return errors.Wrap(err, "migrate")
+	}
 
-	return api.New(
-		api.WithLogging(),
-		api.WithMigrator(migrator),
-		api.WithHttpHandler(":3000", routes),
-		api.WithNetListenerServer(":50051", grpcServer),
-	).Start()
+	store := repository.NewFeatureSQLite(db)
+	featureService := feature.NewService(store)
+	errs := make(chan error, 1)
+
+	go startGrpcServer(featureService, errs)
+	go startHttpServer(store, featureService, errs)
+	return <-errs
+}
+
+func startGrpcServer(featureService *feature.Service, errs chan error) {
+	grpcServer := grpc.NewServer()
+	proto.RegisterFeatureStateServiceServer(grpcServer, featureService)
+
+	lis, err := net.Listen("tcp", ":50051")
+	if err != nil {
+		errs <- err
+		return
+	}
+
+	errs <- grpcServer.Serve(lis)
+}
+
+func startHttpServer(store *repository.FeatureSQLite, featureService *feature.Service, errs chan error) {
+	routes := routes.New(store, featureService)
+	errs <- http.ListenAndServe(":3000", routes)
 }
 
 func main() {
-	log.Fatal(run())
+	log.Fatalf("fatal error: %s", run())
 }

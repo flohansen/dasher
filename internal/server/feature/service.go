@@ -10,7 +10,6 @@ import (
 	"github.com/flohansen/dasher/internal/sqlc"
 	"github.com/flohansen/dasher/pkg/proto"
 	"github.com/pkg/errors"
-	"google.golang.org/grpc"
 )
 
 type FeatureStore interface {
@@ -25,12 +24,12 @@ type Service struct {
 	mu            sync.Mutex
 }
 
-func NewService(grpcServer grpc.ServiceRegistrar, store FeatureStore) *Service {
+func NewService(store FeatureStore) *Service {
 	notifier := Service{
 		subscriptions: make(map[string]map[proto.FeatureStateService_SubscribeFeatureChangesServer]struct{}),
 		store:         store,
 	}
-	proto.RegisterFeatureStateServiceServer(grpcServer, &notifier)
+
 	return &notifier
 }
 

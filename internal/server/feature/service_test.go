@@ -26,8 +26,10 @@ func TestService(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	store := mocks.NewMockFeatureStore(ctrl)
 	lis := bufconn.Listen(2048)
+
 	s := grpc.NewServer()
-	notifier := NewService(s, store)
+	svc := NewService(store)
+	proto.RegisterFeatureStateServiceServer(s, svc)
 
 	go func() {
 		s.Serve(lis)
@@ -75,7 +77,7 @@ func TestService(t *testing.T) {
 
 			// when
 			time.Sleep(10 * time.Millisecond) // workaround to wait until both clients subscribed
-			notifier.Notify(sqlc.Feature{FeatureID: "SOME_FEATURE_ID"})
+			svc.Notify(sqlc.Feature{FeatureID: "SOME_FEATURE_ID"})
 
 			// then
 			feature1, err := stream1.Recv()
