@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v5.27.2
-// source: pkg/proto/feature.proto
+// source: feature.proto
 
 package proto
 
@@ -124,5 +124,5 @@ var FeatureStateService_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "pkg/proto/feature.proto",
+	Metadata: "feature.proto",
 }

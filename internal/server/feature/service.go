@@ -1,4 +1,5 @@
 //go:generate mockgen -source=service.go -destination=mocks/service_mock.go -package=mocks
+//go:generate protoc --proto_path=../../../pkg/proto --go_out=../../../pkg/proto --go_opt=paths=source_relative --go-grpc_out=../../../pkg/proto --go-grpc_opt=paths=source_relative feature.proto
 
 package feature
 
