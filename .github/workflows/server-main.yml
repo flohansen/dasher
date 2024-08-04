@@ -44,7 +44,7 @@ jobs:
         go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
     - name: Generate files
-      run: make generate
+      run: make gen
 
     - name: Go test
       run: go test ./... -race
