@@ -20,7 +20,7 @@ const (
 func TestSQLiteDatastore_Integration(t *testing.T) {
 	t.Run("given an empty database", func(t *testing.T) {
 		db := createTestDatabase(t)
-		store := NewSQLite(db.db)
+		store := NewFeatureSQLite(db.db)
 
 		db.init()
 
@@ -43,7 +43,7 @@ func TestSQLiteDatastore_Integration(t *testing.T) {
 
 	t.Run("given a database with a feature toggle", func(t *testing.T) {
 		db := createTestDatabase(t)
-		store := NewSQLite(db.db)
+		store := NewFeatureSQLite(db.db)
 
 		db.init()
 		db.insertFeature("FEATURE_TOGGLE_TEST")
